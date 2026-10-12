@@ -2,8 +2,10 @@ package com.me.aliftapp.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.me.aliftapp.data.local.dao.ExerciseDAO
-import com.me.aliftapp.data.local.dao.SessionDAO
+import com.me.aliftapp.data.local.dao.ExerciseDao
+import com.me.aliftapp.data.local.dao.SessionDao
+import com.me.aliftapp.data.local.dao.UserDao
+import com.me.aliftapp.data.local.dao.WorkoutSetDao
 
 @Database(
     entities = [
@@ -19,6 +21,8 @@ import com.me.aliftapp.data.local.dao.SessionDAO
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun exerciseDAO(): ExerciseDAO
-    abstract fun SessionDAO(): SessionDAO
+    abstract fun exerciseDao(): ExerciseDao
+    abstract fun sessionDao(): SessionDao
+    abstract fun userDao(): UserDao
+    abstract fun workoutSetDao() : WorkoutSetDao
 }

@@ -8,7 +8,7 @@ import com.me.aliftapp.data.local.ExerciseWithEquipment
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ExerciseDAO {
+interface ExerciseDao {
 
     @Insert
     suspend fun insertExercise(exercise: Exercise)
