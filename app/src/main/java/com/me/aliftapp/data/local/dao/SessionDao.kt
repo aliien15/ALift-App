@@ -16,4 +16,7 @@ interface SessionDao {
 
     @Query("SELECT * FROM workout_session WHERE sessionId = :id")
     fun getSessionWithSets(id: Long): Flow<SessionWithSets>
+
+    @Query("SELECT * FROM workout_session WHERE sessionId = :id")
+    suspend fun getSessionById(id: Long): Session?
 }

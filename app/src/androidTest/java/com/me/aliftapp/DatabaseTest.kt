@@ -112,4 +112,64 @@ class DatabaseTest {
             it.sessionId == result.session.sessionId
         })
     }
+
+    @Test
+    fun deleteSetInSession() = runTest {
+        val dummyExercise = Exercise("Bench Press", 2.5)
+        exerciseDao.insertExercise(dummyExercise)
+
+        val dummyUser = User(uuid = "test-uuid3", name = "Francisco", currentStreak = 14)
+        userDao.insertUser(dummyUser)
+
+        val dummySession = Session(
+            startTimestamp = 1630000000L,
+            name = "Push Day",
+            uuid = dummyUser.uuid
+        )
+        val insertedSessionId = sessionDao.insertSession(dummySession)
+
+        val dummySet1 = WorkoutSet(
+            sessionId = insertedSessionId,
+            weight = 60.0,
+            reps = 10,
+            exerciseName = "Bench Press",
+            setOrder = 1,
+            exerciseOrder = 1
+        )
+        val workoutSetId1 = workoutSetDao.insertWorkoutSet(dummySet1)
+
+        val dummySet2 = WorkoutSet(
+            sessionId = insertedSessionId,
+            weight = 65.0,
+            reps = 8,
+            exerciseName = "Bench Press",
+            setOrder = 2,
+            exerciseOrder = 1
+        )
+        val workoutSetId2 = workoutSetDao.insertWorkoutSet(dummySet2)
+
+        workoutSetDao.deleteWorkoutSetById(workoutSetId1)
+        workoutSetDao.deleteWorkoutSetById(workoutSetId2)
+
+        val result = sessionDao.getSessionWithSets(insertedSessionId).first()
+        assert(result.workoutSets.isEmpty())
+    }
+
+    @Test
+    fun deleteUserCascadeSessions() = runTest {
+        val dummyUser = User(uuid = "test-uuid4", name = "António", currentStreak = 14)
+        userDao.insertUser(dummyUser)
+
+        val dummySession = Session(
+            startTimestamp = 1630000000L,
+            name = "Push Day",
+            uuid = dummyUser.uuid
+        )
+        val insertedSessionId = sessionDao.insertSession(dummySession)
+
+        userDao.deleteUserByUuid(dummyUser.uuid)
+        val deletedSession = sessionDao.getSessionById(insertedSessionId)
+
+        assertEquals(null, deletedSession)
+    }
 }
