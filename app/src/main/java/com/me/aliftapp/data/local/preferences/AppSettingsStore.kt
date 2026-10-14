@@ -18,6 +18,9 @@ class AppSettingsStore(private val context: Context) {
         val IS_DARK_MODE = booleanPreferencesKey("is_dark_mode")
         val WEIGHT_UNIT = stringPreferencesKey("weight_unit")
         val REST_TIMER = intPreferencesKey("rest_timer")
+        val KEEP_SCREEN_AWAKE = booleanPreferencesKey("keep_screen_awake")
+        val AUTO_START_REST_TIMER = booleanPreferencesKey("auto_start_rest_timer")
+        val VIBRATE_ONCE_REST_TIME_IS_OVER = booleanPreferencesKey("vibrate_once_rest_time_is_over")
     }
 
     val settingsFlow: Flow<AppSettings> = context.dataStore.data.map { preferences ->
@@ -29,8 +32,11 @@ class AppSettingsStore(private val context: Context) {
             WeightUnit.KG
         }
         val restTimer = preferences[PreferencesKeys.REST_TIMER] ?: 90
+        val keepScreenAwake = preferences[PreferencesKeys.KEEP_SCREEN_AWAKE] ?: false
+        val autoStartRestTimer = preferences[PreferencesKeys.AUTO_START_REST_TIMER] ?: true
+        val vibrateOnceRestTimeIsOver = preferences[PreferencesKeys.VIBRATE_ONCE_REST_TIME_IS_OVER] ?: true
 
-        AppSettings(isDarkMode, weightUnit, restTimer)
+        AppSettings(isDarkMode, weightUnit, restTimer, keepScreenAwake, autoStartRestTimer, vibrateOnceRestTimeIsOver)
     }
 
     suspend fun setDarkMode(darkMode: Boolean) {
@@ -48,6 +54,24 @@ class AppSettingsStore(private val context: Context) {
     suspend fun setRestTimer(restTimer: Int) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.REST_TIMER] = restTimer
+        }
+    }
+
+    suspend fun setKeepScreenAwake(keepAwake: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.KEEP_SCREEN_AWAKE] = keepAwake
+        }
+    }
+
+    suspend fun setAutoStartRestTimer(autoStart: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.AUTO_START_REST_TIMER] = autoStart
+        }
+    }
+
+    suspend fun setVibrateOnceRestIsOver(vibrate: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.VIBRATE_ONCE_REST_TIME_IS_OVER] = vibrate
         }
     }
 }
