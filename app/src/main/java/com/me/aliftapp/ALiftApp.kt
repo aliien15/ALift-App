@@ -7,6 +7,7 @@ import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.me.aliftapp.data.local.AppDatabase
 import com.me.aliftapp.data.local.Exercise
+import com.me.aliftapp.data.local.preferences.AppSettingsStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,6 +28,10 @@ class ALiftApp : Application() {
                 }
             }
         }).build()
+    }
+
+    val appSettingsStore by lazy {
+        AppSettingsStore(applicationContext)
     }
 
     private suspend fun populateInitialData() {
