@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.me.aliftapp.data.local.Session
 import com.me.aliftapp.data.local.SessionWithSets
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +15,7 @@ interface SessionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSession(session: Session): Long
 
+    @Transaction
     @Query("SELECT * FROM workout_session WHERE sessionId = :id")
     fun getSessionWithSets(id: Long): Flow<SessionWithSets>
 

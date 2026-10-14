@@ -1,5 +1,6 @@
 package com.me.aliftapp.data.local
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 
 @Entity(
@@ -8,5 +9,6 @@ import androidx.room.Entity
 )
 data class EquipmentExerciseCrossRef(
     val equipmentName: String,
+    @ColumnInfo(index = true)
     val exerciseName: String
 )
