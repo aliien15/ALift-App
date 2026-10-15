@@ -24,19 +24,23 @@ class AppSettingsStore(private val context: Context) {
     }
 
     val settingsFlow: Flow<AppSettings> = context.dataStore.data.map { preferences ->
-        val isDarkMode = preferences[PreferencesKeys.IS_DARK_MODE] ?: false
-        val weightUnitString = preferences[PreferencesKeys.WEIGHT_UNIT] ?: WeightUnit.KG.name
+        val isDarkMode = preferences[PreferencesKeys.IS_DARK_MODE] ?: AppSettings.DEFAULT_DARK_MODE
+        val weightUnitString = preferences[PreferencesKeys.WEIGHT_UNIT] ?: AppSettings.DEFAULT_WEIGHT_UNIT.name
         val weightUnit = try {
             WeightUnit.valueOf(weightUnitString)
         } catch (_: IllegalArgumentException) {
-            WeightUnit.KG
+            AppSettings.DEFAULT_WEIGHT_UNIT
         }
-        val restTimer = preferences[PreferencesKeys.REST_TIMER] ?: 90
-        val keepScreenAwake = preferences[PreferencesKeys.KEEP_SCREEN_AWAKE] ?: false
-        val autoStartRestTimer = preferences[PreferencesKeys.AUTO_START_REST_TIMER] ?: true
-        val vibrateOnceRestTimeIsOver = preferences[PreferencesKeys.VIBRATE_ONCE_REST_TIME_IS_OVER] ?: true
+        val restTimer = preferences[PreferencesKeys.REST_TIMER] ?: AppSettings.DEFAULT_REST_TIMER_SECONDS
+        val keepScreenAwake = preferences[PreferencesKeys.KEEP_SCREEN_AWAKE] ?: AppSettings.DEFAULT_KEEP_SCREEN_AWAKE
+        val autoStartRestTimer = preferences[PreferencesKeys.AUTO_START_REST_TIMER] ?: AppSettings.DEFAULT_AUTO_START_REST_TIMER
+        val vibrateOnceRestTimeIsOver = preferences[PreferencesKeys.VIBRATE_ONCE_REST_TIME_IS_OVER] ?: AppSettings.DEFAULT_VIBRATE_ONCE_REST_IS_OVER
 
         AppSettings(isDarkMode, weightUnit, restTimer, keepScreenAwake, autoStartRestTimer, vibrateOnceRestTimeIsOver)
+    }
+
+    suspend fun setAllSettingsToDefault() {
+        context.dataStore.edit { preferences -> preferences.clear() }
     }
 
     suspend fun setDarkMode(darkMode: Boolean) {
