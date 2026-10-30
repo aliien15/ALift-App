@@ -7,21 +7,22 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "workout_set",
-    foreignKeys = [
-        ForeignKey(
-            entity = Exercise::class,
-            parentColumns = ["exerciseName"],
-            childColumns = ["exerciseName"],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = Session::class,
-            parentColumns = ["sessionId"],
-            childColumns = ["sessionId"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
-    indices = [Index("exerciseName"), Index("sessionId")]
+    foreignKeys =
+        [
+            ForeignKey(
+                entity = Exercise::class,
+                parentColumns = ["exerciseName"],
+                childColumns = ["exerciseName"],
+                onDelete = ForeignKey.CASCADE,
+            ),
+            ForeignKey(
+                entity = Session::class,
+                parentColumns = ["sessionId"],
+                childColumns = ["sessionId"],
+                onDelete = ForeignKey.CASCADE,
+            ),
+        ],
+    indices = [Index("exerciseName"), Index("sessionId")],
 )
 data class WorkoutSet(
     @PrimaryKey(autoGenerate = true) val setId: Long = 0,
@@ -30,5 +31,5 @@ data class WorkoutSet(
     val setOrder: Int,
     val exerciseOrder: Int,
     val weight: Double,
-    val reps: Int
+    val reps: Int,
 )

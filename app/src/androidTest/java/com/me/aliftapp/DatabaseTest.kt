@@ -13,6 +13,7 @@ import com.me.aliftapp.data.local.dao.ExerciseDao
 import com.me.aliftapp.data.local.dao.SessionDao
 import com.me.aliftapp.data.local.dao.UserDao
 import com.me.aliftapp.data.local.dao.WorkoutSetDao
+import java.io.IOException
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -20,7 +21,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
 class DatabaseTest {
@@ -32,12 +32,13 @@ class DatabaseTest {
 
     @Before
     fun setup() {
-        database = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            AppDatabase::class.java
-        )
-            .allowMainThreadQueries()
-            .build()
+        database =
+            Room.inMemoryDatabaseBuilder(
+                    ApplicationProvider.getApplicationContext(),
+                    AppDatabase::class.java,
+                )
+                .allowMainThreadQueries()
+                .build()
 
         sessionDao = database.sessionDao()
         userDao = database.userDao()
@@ -54,11 +55,7 @@ class DatabaseTest {
     @Test
     fun insertAndReadSession() = runTest {
         val dummyUser = User(uuid = "test-uuid-1", name = "Alex", currentStreak = 0)
-        val dummySession = Session(
-            startTimestamp = 1000L,
-            name = "Leg Day",
-            uuid = dummyUser.uuid
-        )
+        val dummySession = Session(startTimestamp = 1000L, name = "Leg Day", uuid = dummyUser.uuid)
 
         userDao.insertUser(dummyUser)
         val insertedSessionId = sessionDao.insertSession(dummySession)
@@ -77,40 +74,37 @@ class DatabaseTest {
         val dummyUser = User(uuid = "test-uuid-2", name = "Sam", currentStreak = 5)
         userDao.insertUser(dummyUser)
 
-        val dummySession = Session(
-            startTimestamp = 1630000000L,
-            name = "Push Day",
-            uuid = dummyUser.uuid
-        )
+        val dummySession =
+            Session(startTimestamp = 1630000000L, name = "Push Day", uuid = dummyUser.uuid)
 
         val insertedSessionId = sessionDao.insertSession(dummySession)
 
-        val dummySet1 = WorkoutSet(
-            sessionId = insertedSessionId,
-            weight = 60.0,
-            reps = 10,
-            exerciseName = "Bench Press",
-            setOrder = 1,
-            exerciseOrder = 1
-        )
+        val dummySet1 =
+            WorkoutSet(
+                sessionId = insertedSessionId,
+                weight = 60.0,
+                reps = 10,
+                exerciseName = "Bench Press",
+                setOrder = 1,
+                exerciseOrder = 1,
+            )
         workoutSetDao.insertWorkoutSet(dummySet1)
 
-        val dummySet2 = WorkoutSet(
-            sessionId = insertedSessionId,
-            weight = 65.0,
-            reps = 8,
-            exerciseName = "Bench Press",
-            setOrder = 2,
-            exerciseOrder = 1
-        )
+        val dummySet2 =
+            WorkoutSet(
+                sessionId = insertedSessionId,
+                weight = 65.0,
+                reps = 8,
+                exerciseName = "Bench Press",
+                setOrder = 2,
+                exerciseOrder = 1,
+            )
         workoutSetDao.insertWorkoutSet(dummySet2)
 
         val result = sessionDao.getSessionWithSets(insertedSessionId).first()
         assertEquals(result.session.name, "Push Day")
         assert(result.workoutSets.size == 2)
-        assert(result.workoutSets.all {
-            it.sessionId == result.session.sessionId
-        })
+        assert(result.workoutSets.all { it.sessionId == result.session.sessionId })
     }
 
     @Test
@@ -121,31 +115,30 @@ class DatabaseTest {
         val dummyUser = User(uuid = "test-uuid3", name = "Francisco", currentStreak = 14)
         userDao.insertUser(dummyUser)
 
-        val dummySession = Session(
-            startTimestamp = 1630000000L,
-            name = "Push Day",
-            uuid = dummyUser.uuid
-        )
+        val dummySession =
+            Session(startTimestamp = 1630000000L, name = "Push Day", uuid = dummyUser.uuid)
         val insertedSessionId = sessionDao.insertSession(dummySession)
 
-        val dummySet1 = WorkoutSet(
-            sessionId = insertedSessionId,
-            weight = 60.0,
-            reps = 10,
-            exerciseName = "Bench Press",
-            setOrder = 1,
-            exerciseOrder = 1
-        )
+        val dummySet1 =
+            WorkoutSet(
+                sessionId = insertedSessionId,
+                weight = 60.0,
+                reps = 10,
+                exerciseName = "Bench Press",
+                setOrder = 1,
+                exerciseOrder = 1,
+            )
         val workoutSetId1 = workoutSetDao.insertWorkoutSet(dummySet1)
 
-        val dummySet2 = WorkoutSet(
-            sessionId = insertedSessionId,
-            weight = 65.0,
-            reps = 8,
-            exerciseName = "Bench Press",
-            setOrder = 2,
-            exerciseOrder = 1
-        )
+        val dummySet2 =
+            WorkoutSet(
+                sessionId = insertedSessionId,
+                weight = 65.0,
+                reps = 8,
+                exerciseName = "Bench Press",
+                setOrder = 2,
+                exerciseOrder = 1,
+            )
         val workoutSetId2 = workoutSetDao.insertWorkoutSet(dummySet2)
 
         workoutSetDao.deleteWorkoutSetById(workoutSetId1)
@@ -160,11 +153,8 @@ class DatabaseTest {
         val dummyUser = User(uuid = "test-uuid4", name = "António", currentStreak = 14)
         userDao.insertUser(dummyUser)
 
-        val dummySession = Session(
-            startTimestamp = 1630000000L,
-            name = "Push Day",
-            uuid = dummyUser.uuid
-        )
+        val dummySession =
+            Session(startTimestamp = 1630000000L, name = "Push Day", uuid = dummyUser.uuid)
         val insertedSessionId = sessionDao.insertSession(dummySession)
 
         userDao.deleteUserByUuid(dummyUser.uuid)

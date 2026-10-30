@@ -6,7 +6,7 @@ data class AppSettings(
     val restTimerSeconds: Int = DEFAULT_REST_TIMER_SECONDS,
     val keepScreenAwake: Boolean = DEFAULT_KEEP_SCREEN_AWAKE,
     val autoStartRestTimer: Boolean = DEFAULT_AUTO_START_REST_TIMER,
-    val vibrateOnceRestIsOver: Boolean = DEFAULT_VIBRATE_ONCE_REST_IS_OVER
+    val vibrateOnceRestIsOver: Boolean = DEFAULT_VIBRATE_ONCE_REST_IS_OVER,
 ) {
     companion object {
         const val DEFAULT_DARK_MODE = false

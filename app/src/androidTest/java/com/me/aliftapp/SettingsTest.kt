@@ -18,19 +18,21 @@ import org.junit.runner.RunWith
 class SettingsTest {
     private lateinit var settings: AppSettingsStore
     private val invertedDarkMode = !AppSettings.DEFAULT_DARK_MODE
-    private val invertedWeightUnit = if (AppSettings.DEFAULT_WEIGHT_UNIT == WeightUnit.KG) WeightUnit.LBS else WeightUnit.KG
+    private val invertedWeightUnit =
+        if (AppSettings.DEFAULT_WEIGHT_UNIT == WeightUnit.KG) WeightUnit.LBS else WeightUnit.KG
     private val invertedRestTimer = AppSettings.DEFAULT_REST_TIMER_SECONDS + 90
     private val invertedKeepScreenAwake = !AppSettings.DEFAULT_KEEP_SCREEN_AWAKE
     private val invertedAutoStartRestTimer = !AppSettings.DEFAULT_AUTO_START_REST_TIMER
     private val invertedVibrateOnceRestIsOver = !AppSettings.DEFAULT_VIBRATE_ONCE_REST_IS_OVER
-    private val invertedDefaultSettings = AppSettings(
-        invertedDarkMode,
-        invertedWeightUnit,
-        invertedRestTimer,
-        invertedKeepScreenAwake,
-        invertedAutoStartRestTimer,
-        invertedVibrateOnceRestIsOver
-    )
+    private val invertedDefaultSettings =
+        AppSettings(
+            invertedDarkMode,
+            invertedWeightUnit,
+            invertedRestTimer,
+            invertedKeepScreenAwake,
+            invertedAutoStartRestTimer,
+            invertedVibrateOnceRestIsOver,
+        )
 
     @Before
     fun setup() {

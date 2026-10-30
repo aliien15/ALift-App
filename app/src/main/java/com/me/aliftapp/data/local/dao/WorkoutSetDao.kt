@@ -7,10 +7,7 @@ import com.me.aliftapp.data.local.WorkoutSet
 
 @Dao
 interface WorkoutSetDao {
+    @Insert suspend fun insertWorkoutSet(workoutSet: WorkoutSet): Long
 
-    @Insert
-    suspend fun insertWorkoutSet(workoutSet: WorkoutSet): Long
-
-    @Query("DELETE FROM workout_set WHERE setId = :id")
-    suspend fun deleteWorkoutSetById(id: Long)
+    @Query("DELETE FROM workout_set WHERE setId = :id") suspend fun deleteWorkoutSetById(id: Long)
 }

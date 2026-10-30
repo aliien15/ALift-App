@@ -5,10 +5,6 @@ import androidx.room.Relation
 
 data class SessionWithSets(
     @Embedded val session: Session,
-
-    @Relation(
-        parentColumn = "sessionId",
-        entityColumn = "sessionId"
-    )
-    val workoutSets: List<WorkoutSet>
+    @Relation(parentColumn = "sessionId", entityColumn = "sessionId")
+    val workoutSets: List<WorkoutSet>,
 )

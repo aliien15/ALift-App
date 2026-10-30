@@ -8,5 +8,5 @@ import java.util.UUID
 data class User(
     @PrimaryKey val uuid: String = UUID.randomUUID().toString(),
     val name: String,
-    val currentStreak: Int
+    val currentStreak: Int,
 )

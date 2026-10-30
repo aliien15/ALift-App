@@ -1,5 +1,6 @@
 *.iml
 .gradle
+.webp
 /local.properties
 /.idea/caches
 /.idea/libraries

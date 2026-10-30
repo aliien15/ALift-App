@@ -6,11 +6,10 @@ import androidx.room.Relation
 
 data class ExerciseWithEquipment(
     @Embedded val exercise: Exercise,
-
     @Relation(
         parentColumn = "exerciseName",
         entityColumn = "equipmentName",
-        associateBy = Junction(EquipmentExerciseCrossRef::class)
+        associateBy = Junction(EquipmentExerciseCrossRef::class),
     )
-    val equipments: List<Equipment>
+    val equipments: List<Equipment>,
 )
