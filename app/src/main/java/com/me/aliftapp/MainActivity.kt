@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.me.aliftapp.ui.settings.SettingsScreen
 import com.me.aliftapp.ui.settings.SettingsViewModel
 import com.me.aliftapp.ui.theme.ALiftAppTheme
