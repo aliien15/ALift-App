@@ -2,10 +2,14 @@ package com.me.aliftapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Light Mode Colors
+val BackgroundLight = Color(0xFFFFFFFF) // Basic white
+val HeaderLight = Color(0xFFF5F0E6) // Light beige
+val TextLight = Color(0xFF000000) // Black
+val LineLight = Color(0xFFE0E0E0) // Light gray
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Dark Mode Colors
+val BackgroundDark = Color(0xFF121212) // Dark gray
+val HeaderDark = Color(0xFF1E1E1E) // Lighter shade of gray
+val TextDark = Color(0xFFFFFFFF) // White
+val LineDark = Color(0xFF333333) // Subtle medium-dark gray
