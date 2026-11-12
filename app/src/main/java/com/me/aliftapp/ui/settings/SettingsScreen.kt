@@ -22,10 +22,14 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                 .padding(16.dp),
             contentAlignment = Alignment.Center,
         ) {
-            Text(text = "Settings", style = MaterialTheme.typography.headlineMedium)
+            Text(
+                text = "Settings",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
         }
 
-        HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.primary)
+        HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
         Column(
             modifier =
@@ -88,7 +92,19 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                 onCheckedChange = viewModel::setVibrateOnceRestIsOver,
             )
 
-            Button(onClick = { viewModel.resetToDefaults() }, modifier = Modifier.fillMaxWidth()) {
+            Button(
+                onClick = { viewModel.resetToDefaults() },
+                modifier = Modifier.fillMaxWidth(),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor =
+                            MaterialTheme.colorScheme
+                                .surface, // Beige (Light mode) / Lighter Gray (Dark mode)
+                        contentColor =
+                            MaterialTheme.colorScheme
+                                .onSurface, // Black text (Light mode) / White text (Dark mode)
+                    ),
+            ) {
                 Text("Reset all settings to default")
             }
         }
@@ -101,7 +117,25 @@ private fun SwitchSettingRow(
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    SettingBox(label = label) { Switch(checked = isChecked, onCheckedChange = onCheckedChange) }
+    SettingBox(label = label) {
+        Switch(
+            checked = isChecked,
+            onCheckedChange = onCheckedChange,
+            colors =
+                SwitchDefaults.colors(
+                    // Colors when OFF
+                    uncheckedTrackColor =
+                        MaterialTheme.colorScheme.outlineVariant, // Light Gray track
+                    uncheckedThumbColor = MaterialTheme.colorScheme.background, // White thumb
+                    uncheckedBorderColor =
+                        MaterialTheme.colorScheme.surfaceTint, // Removes the muddy border
+
+                    // Colors when ON
+                    checkedTrackColor = MaterialTheme.colorScheme.primary, // White track
+                    checkedThumbColor = MaterialTheme.colorScheme.onPrimary, // Black thumb
+                ),
+        )
+    }
 }
 
 @Composable
