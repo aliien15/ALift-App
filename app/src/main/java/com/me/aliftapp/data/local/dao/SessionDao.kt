@@ -27,5 +27,13 @@ interface SessionDao {
     // Limit 1 is kinda just a safety measure, as it's always either gonna return
     // 1 value or 0 (null) if my implementation is actually done right
     @Query("SELECT * FROM workout_session WHERE endTimestamp IS NULL LIMIT 1")
-    suspend fun getActiveSessionWithSets(): Flow<SessionWithSets?>
+    fun getActiveSessionWithSets(): Flow<SessionWithSets?>
+
+    @Query(
+        "SELECT COUNT(*) FROM workout_set WHERE sessionId = :sessionId AND exerciseName = :exerciseName"
+    )
+    suspend fun getLastSetNumberForExercise(sessionId: Long, exerciseName: String): Int
+
+    @Query("SELECT IFFNULL(MAX(exerciseOrder), 0) FROM workout_set WHERE sessionId = :sessionId")
+    suspend fun getLastExerciseNumber(sessionId: Long): Int
 }
