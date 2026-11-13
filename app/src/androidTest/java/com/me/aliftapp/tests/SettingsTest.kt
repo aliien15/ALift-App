@@ -1,4 +1,4 @@
-package com.me.aliftapp
+package com.me.aliftapp.tests
 
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4

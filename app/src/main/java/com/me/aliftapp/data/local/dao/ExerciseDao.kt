@@ -17,4 +17,8 @@ interface ExerciseDao {
     @Transaction
     @Query("SELECT * FROM exercise")
     fun getAllExercisesWithEquipment(): Flow<List<ExerciseWithEquipment>>
+
+    @Transaction
+    @Query("SELECT * FROM exercise WHERE exerciseName LIKE '%' || :query || '%'")
+    fun getAllSearchedExercisesWithEquipment(query: String): Flow<List<ExerciseWithEquipment>>
 }

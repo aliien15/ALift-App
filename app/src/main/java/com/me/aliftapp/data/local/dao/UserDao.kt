@@ -10,4 +10,6 @@ interface UserDao {
     @Insert suspend fun insertUser(user: User)
 
     @Query("DELETE FROM user WHERE uuid = :userUuid") suspend fun deleteUserByUuid(userUuid: String)
+
+    @Query("SELECT * FROM user LIMIT 1") suspend fun getCurrentUser(): User?
 }

@@ -1,4 +1,4 @@
-package com.me.aliftapp
+package com.me.aliftapp.tests
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
