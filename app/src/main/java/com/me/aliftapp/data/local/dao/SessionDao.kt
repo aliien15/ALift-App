@@ -34,6 +34,6 @@ interface SessionDao {
     )
     suspend fun getLastSetNumberForExercise(sessionId: Long, exerciseName: String): Int
 
-    @Query("SELECT IFFNULL(MAX(exerciseOrder), 0) FROM workout_set WHERE sessionId = :sessionId")
+    @Query("SELECT IFNULL(MAX(exerciseOrder), 0) FROM workout_set WHERE sessionId = :sessionId")
     suspend fun getLastExerciseNumber(sessionId: Long): Int
 }
