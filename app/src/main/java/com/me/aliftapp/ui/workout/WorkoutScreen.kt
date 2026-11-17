@@ -51,7 +51,40 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                 Text("Add Dummy Exercises (Test)")
             }
 
-            // TODO: Actual exercise boxes
+            workout
+                ?.workoutSets
+                ?.groupBy { it.exerciseName }
+                ?.let { groupedSets ->
+                    for ((exerciseName, workoutSets) in groupedSets) {
+                        OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                modifier =
+                                    Modifier.fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(text = exerciseName)
+                            }
+
+                            var setCounter = 1
+                            for (workoutSet in workoutSets) {
+                                OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+                                    Row(
+                                        modifier =
+                                            Modifier.fillMaxWidth()
+                                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Text(text = "#${setCounter}: TODO")
+                                    }
+                                }
+                                setCounter++
+                            }
+                        }
+                    }
+                }
 
             Button(
                 onClick = {
