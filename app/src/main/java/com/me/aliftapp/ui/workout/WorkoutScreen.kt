@@ -1,5 +1,6 @@
 package com.me.aliftapp.ui.workout
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -7,16 +8,30 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.delay
 
 @Composable
 fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
     val workout by viewModel.workoutState.collectAsStateWithLifecycle()
+    var currentTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
+
+    LaunchedEffect(Unit) {
+        do {
+            delay(1.seconds)
+            currentTime = System.currentTimeMillis()
+        } while (true)
+    }
 
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         // Top Header
@@ -145,6 +160,7 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                     modifier = Modifier.size(48.dp),
                     shape = CircleShape,
                     contentPadding = PaddingValues(0.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.background,
@@ -152,6 +168,23 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                         ),
                 ) {
                     Text("-")
+                }
+
+                Surface(
+                    shape = ButtonDefaults.shape,
+                    color = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                ) {
+                    Text(
+                        text =
+                            formatSessionTime(
+                                workout?.session?.startTimestamp ?: currentTime,
+                                currentTime,
+                            ),
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
                 }
 
                 Button(
@@ -165,6 +198,7 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                     modifier = Modifier.size(48.dp),
                     shape = CircleShape,
                     contentPadding = PaddingValues(0.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.background,
@@ -175,5 +209,20 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                 }
             }
         }
+    }
+}
+
+private fun formatSessionTime(startTime: Long, currentTime: Long): String {
+    val currentMillis = currentTime - startTime
+    val totalSeconds = currentMillis / 1000
+
+    val seconds = (totalSeconds % 60).toString().padStart(2, '0')
+    val minutes = ((totalSeconds / 60) % 60).toString().padStart(2, '0')
+    val hours = (totalSeconds / 3600).toString().padStart(2, '0')
+
+    return if (hours != "00") {
+        "$hours:$minutes:$seconds"
+    } else {
+        "$minutes:$seconds"
     }
 }

@@ -23,6 +23,12 @@ class ActiveWorkoutViewModel(private val workoutRepository: WorkoutRepository) :
                 initialValue = null,
             )
 
+    init {
+        // TODO: Remove this once the Main Menu is built.
+        // The session should be started via navigation arguments, not on init.
+        startNewSession("New Workout")
+    }
+
     fun startNewSession(name: String) {
         viewModelScope.launch { workoutRepository.startNewSession(name) }
     }
