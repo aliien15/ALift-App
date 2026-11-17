@@ -212,7 +212,11 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
     }
 }
 
-private fun formatSessionTime(startTime: Long, currentTime: Long): String {
+internal fun formatSessionTime(startTime: Long, currentTime: Long): String {
+    require(startTime <= currentTime) {
+        "Contract Violation: startTime ($startTime) cannot be greater than currentTime ($currentTime)"
+    }
+
     val currentMillis = currentTime - startTime
     val totalSeconds = currentMillis / 1000
 
