@@ -6,6 +6,8 @@ import com.me.aliftapp.data.local.Session
 import com.me.aliftapp.data.local.SessionWithSets
 import com.me.aliftapp.data.local.WorkoutSet
 import com.me.aliftapp.data.repository.WorkoutRepository
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -35,5 +37,21 @@ class ActiveWorkoutViewModel(private val workoutRepository: WorkoutRepository) :
 
     fun finishSession(session: Session) {
         viewModelScope.launch { workoutRepository.finishSession(session) }
+    }
+
+    fun generateDummyWorkoutForUi() {
+        viewModelScope.launch {
+            try {
+                val sessionId = workoutRepository.startNewSession("Dummy Chest Day")
+                workoutRepository.addSetToSession(sessionId, "Bench Press")
+                workoutRepository.addSetToSession(sessionId, "Bench Press")
+                workoutRepository.addSetToSession(sessionId, "Squat")
+            } catch (e: Exception) {
+                if (e is CancellationException) {
+                    ensureActive()
+                }
+                e.printStackTrace()
+            }
+        }
     }
 }
