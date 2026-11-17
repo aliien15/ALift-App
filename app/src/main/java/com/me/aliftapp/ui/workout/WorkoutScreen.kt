@@ -40,7 +40,7 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
         ) {
             // Button made for testing, not meant to go on production
             Button(
-                onClick = { viewModel.generateDummyWorkoutForUI() },
+                onClick = { viewModel.generateDummyWorkoutForUi() },
                 modifier = Modifier.fillMaxWidth(),
                 colors =
                     ButtonDefaults.buttonColors(
