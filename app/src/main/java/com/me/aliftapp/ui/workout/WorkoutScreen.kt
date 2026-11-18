@@ -128,9 +128,7 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                                             },
                                         colors =
                                             CardDefaults.cardColors(
-                                                containerColor =
-                                                    MaterialTheme.colorScheme
-                                                        .background // Contrast for inner boxes
+                                                containerColor = backgroundColor
                                             ),
                                     ) {
                                         Row(
