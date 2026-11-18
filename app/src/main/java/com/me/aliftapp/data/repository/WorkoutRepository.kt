@@ -68,6 +68,7 @@ class WorkoutRepository(
     }
 
     suspend fun discardSession(session: Session) {
+        workoutSetDao.deleteAllSetsForSession(session.sessionId)
         sessionDao.discardSession(session.sessionId)
     }
 }
