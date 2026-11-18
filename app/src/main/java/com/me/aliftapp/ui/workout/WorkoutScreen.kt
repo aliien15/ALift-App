@@ -55,7 +55,7 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = "Workout",
+                text = workout?.session?.name ?: "New Workout",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onBackground,
             )
