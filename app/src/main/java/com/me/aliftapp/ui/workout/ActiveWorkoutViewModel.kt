@@ -52,7 +52,7 @@ class ActiveWorkoutViewModel(private val workoutRepository: WorkoutRepository) :
     fun generateDummyWorkoutForUi() {
         viewModelScope.launch {
             try {
-                val sessionId = workoutRepository.startNewSession("Dummy Chest Day")
+                val sessionId = workoutState.value?.session?.sessionId ?: 0L
                 workoutRepository.addSetToSession(sessionId, "Bench Press")
                 workoutRepository.addSetToSession(sessionId, "Bench Press")
                 workoutRepository.addSetToSession(sessionId, "Squat")
