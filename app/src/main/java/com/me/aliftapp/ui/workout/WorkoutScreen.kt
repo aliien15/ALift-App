@@ -191,6 +191,7 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Button(
                     onClick = {
@@ -215,10 +216,10 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                 Surface(
                     shape = ButtonDefaults.shape,
                     color =
-                        if (isRestTimerActive) MaterialTheme.colorScheme.tertiary
+                        if (isRestTimerActive) completedSetColor
                         else MaterialTheme.colorScheme.primary,
                     contentColor =
-                        if (isRestTimerActive) MaterialTheme.colorScheme.onTertiary
+                        if (isRestTimerActive) MaterialTheme.colorScheme.onBackground
                         else MaterialTheme.colorScheme.onPrimary,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 ) {
