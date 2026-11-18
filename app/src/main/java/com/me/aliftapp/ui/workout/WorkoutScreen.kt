@@ -28,9 +28,14 @@ import kotlinx.coroutines.delay
 @Composable
 fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
     val workout by viewModel.workoutState.collectAsStateWithLifecycle()
-    var currentTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
     val settings by viewModel.settingsState.collectAsStateWithLifecycle()
-    val restTimerSeconds = settings?.restTimerSeconds ?: AppSettings.DEFAULT_REST_TIMER_SECONDS
+
+    // Rest timer state
+    val isRestTimerActive by viewModel.isRestTimerActive.collectAsStateWithLifecycle()
+    val restTimeRemaining by viewModel.restTimeRemaining.collectAsStateWithLifecycle()
+
+    var currentTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
+
     val completedSetColor =
         if (isSystemInDarkTheme()) {
             Color(0xFF2E7D32)
@@ -67,10 +72,7 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
         Column(
             modifier =
                 Modifier.fillMaxWidth()
-                    .weight(
-                        1f
-                    ) // This forces the column to take all remaining space, pushing the bottom
-                    // button down
+                    .weight(1f)
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -120,11 +122,21 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                                     Card(
                                         modifier =
                                             Modifier.fillMaxWidth().clickable {
+                                                val isNowComplete = !workoutSet.isCompleted
                                                 val updatedSet =
-                                                    workoutSet.copy(
-                                                        isCompleted = !workoutSet.isCompleted
-                                                    )
+                                                    workoutSet.copy(isCompleted = isNowComplete)
                                                 viewModel.updateSet(updatedSet)
+
+                                                val autoStart =
+                                                    settings?.autoStartRestTimer
+                                                        ?: AppSettings.DEFAULT_AUTO_START_REST_TIMER
+                                                val timerSeconds =
+                                                    settings?.restTimerSeconds
+                                                        ?: AppSettings.DEFAULT_REST_TIMER_SECONDS
+
+                                                if (isNowComplete && autoStart) {
+                                                    viewModel.startRestTimer(timerSeconds)
+                                                }
                                             },
                                         colors =
                                             CardDefaults.cardColors(
@@ -185,7 +197,6 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                         workout?.session?.let { activeSession ->
                             viewModel.discardSession(activeSession)
                         }
-
                         // TODO: back to the main menu with confirmation menu
                     },
                     modifier = Modifier.size(48.dp),
@@ -203,16 +214,28 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
 
                 Surface(
                     shape = ButtonDefaults.shape,
-                    color = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    color =
+                        if (isRestTimerActive) MaterialTheme.colorScheme.tertiary
+                        else MaterialTheme.colorScheme.primary,
+                    contentColor =
+                        if (isRestTimerActive) MaterialTheme.colorScheme.onTertiary
+                        else MaterialTheme.colorScheme.onPrimary,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 ) {
-                    Text(
-                        text =
+                    val timerText =
+                        if (isRestTimerActive) {
+                            val m = (restTimeRemaining / 60).toString().padStart(2, '0')
+                            val s = (restTimeRemaining % 60).toString().padStart(2, '0')
+                            "Rest $m:$s"
+                        } else {
                             formatSessionTime(
                                 workout?.session?.startTimestamp ?: currentTime,
                                 currentTime,
-                            ),
+                            )
+                        }
+
+                    Text(
+                        text = timerText,
                         modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
                         style = MaterialTheme.typography.labelLarge,
                     )
@@ -223,7 +246,6 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                         workout?.session?.let { activeSession ->
                             viewModel.finishSession(activeSession)
                         }
-
                         // TODO: Confirmation screen with workout finishing screen
                     },
                     modifier = Modifier.size(48.dp),
