@@ -45,6 +45,10 @@ class ActiveWorkoutViewModel(private val workoutRepository: WorkoutRepository) :
         viewModelScope.launch { workoutRepository.finishSession(session) }
     }
 
+    fun discardSession(session: Session) {
+        viewModelScope.launch { workoutRepository.discardSession(session) }
+    }
+
     fun generateDummyWorkoutForUi() {
         viewModelScope.launch {
             try {

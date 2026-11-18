@@ -36,4 +36,7 @@ interface SessionDao {
 
     @Query("SELECT IFNULL(MAX(exerciseOrder), 0) FROM workout_set WHERE sessionId = :sessionId")
     suspend fun getLastExerciseNumber(sessionId: Long): Int
+
+    @Query("DELETE FROM workout_session WHERE sessionId = :sessionId")
+    suspend fun discardSession(sessionId: Long)
 }

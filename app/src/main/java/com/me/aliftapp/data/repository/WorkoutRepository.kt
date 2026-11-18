@@ -66,4 +66,8 @@ class WorkoutRepository(
         val completeSession = session.copy(endTimestamp = System.currentTimeMillis())
         sessionDao.updateSession(completeSession)
     }
+
+    suspend fun discardSession(session: Session) {
+        sessionDao.discardSession(session.sessionId)
+    }
 }

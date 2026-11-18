@@ -155,7 +155,11 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
             ) {
                 Button(
                     onClick = {
-                        // TODO: discard workout and back to the main menu with confirmation menu
+                        workout?.session?.let { activeSession ->
+                            viewModel.discardSession(activeSession)
+                        }
+
+                        // TODO: back to the main menu with confirmation menu
                     },
                     modifier = Modifier.size(48.dp),
                     shape = CircleShape,
