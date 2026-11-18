@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.me.aliftapp.data.local.Session
 import com.me.aliftapp.data.local.SessionWithSets
 import com.me.aliftapp.data.local.WorkoutSet
+import com.me.aliftapp.data.local.preferences.AppSettings
+import com.me.aliftapp.data.local.preferences.AppSettingsStore
 import com.me.aliftapp.data.repository.WorkoutRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ensureActive
@@ -13,7 +15,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class ActiveWorkoutViewModel(private val workoutRepository: WorkoutRepository) : ViewModel() {
+class ActiveWorkoutViewModel(
+    private val workoutRepository: WorkoutRepository,
+    private val settingsStore: AppSettingsStore,
+) : ViewModel() {
     val workoutState: StateFlow<SessionWithSets?> =
         workoutRepository
             .getActiveSessionStream()
@@ -22,6 +27,12 @@ class ActiveWorkoutViewModel(private val workoutRepository: WorkoutRepository) :
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = null,
             )
+    val settingsState: StateFlow<AppSettings?> =
+        settingsStore.settingsFlow.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null,
+        )
 
     init {
         // TODO: Remove this once the Main Menu is built.

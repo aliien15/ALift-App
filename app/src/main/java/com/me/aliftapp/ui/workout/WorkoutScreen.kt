@@ -2,6 +2,8 @@ package com.me.aliftapp.ui.workout
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -15,9 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.me.aliftapp.data.local.preferences.AppSettings
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 
@@ -25,6 +29,14 @@ import kotlinx.coroutines.delay
 fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
     val workout by viewModel.workoutState.collectAsStateWithLifecycle()
     var currentTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val settings by viewModel.settingsState.collectAsStateWithLifecycle()
+    val restTimerSeconds = settings?.restTimerSeconds ?: AppSettings.DEFAULT_REST_TIMER_SECONDS
+    val completedSetColor =
+        if (isSystemInDarkTheme()) {
+            Color(0xFF2E7D32)
+        } else {
+            Color(0xFFC8E6C9)
+        }
 
     LaunchedEffect(Unit) {
         do {
@@ -102,8 +114,18 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
 
                                 var setCounter = 1
                                 for (workoutSet in workoutSets) {
+                                    val backgroundColor =
+                                        if (workoutSet.isCompleted) completedSetColor
+                                        else MaterialTheme.colorScheme.background
                                     Card(
-                                        modifier = Modifier.fillMaxWidth(),
+                                        modifier =
+                                            Modifier.fillMaxWidth().clickable {
+                                                val updatedSet =
+                                                    workoutSet.copy(
+                                                        isCompleted = !workoutSet.isCompleted
+                                                    )
+                                                viewModel.updateSet(updatedSet)
+                                            },
                                         colors =
                                             CardDefaults.cardColors(
                                                 containerColor =
@@ -118,7 +140,14 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                                             horizontalArrangement = Arrangement.SpaceBetween,
                                             verticalAlignment = Alignment.CenterVertically,
                                         ) {
-                                            Text(text = "$setCounter", fontWeight = FontWeight.Bold)
+                                            if (workoutSet.isCompleted) {
+                                                Text(text = "✓", fontWeight = FontWeight.Bold)
+                                            } else {
+                                                Text(
+                                                    text = "$setCounter",
+                                                    fontWeight = FontWeight.Bold,
+                                                )
+                                            }
                                             Text(text = "--- kg")
                                             Text(text = "--- reps")
                                         }

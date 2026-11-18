@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                                         database.workoutSetDao(),
                                         database.userDao(),
                                     )
-                                return ActiveWorkoutViewModel(repository) as T
+                                return ActiveWorkoutViewModel(repository, settingsStore) as T
                             }
                         }
                 )
