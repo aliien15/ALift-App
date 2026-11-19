@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -142,49 +143,80 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
 
                         workoutSets.forEachIndexed { index, workoutSet ->
                             key(workoutSet.setId) {
+                                val dismissState = rememberSwipeToDismissBoxState()
                                 val backgroundColor =
                                     if (workoutSet.isCompleted) completedSetColor
                                     else MaterialTheme.colorScheme.background
 
-                                Card(
-                                    modifier =
-                                        Modifier.fillMaxWidth().clickable {
-                                            val isNowComplete = !workoutSet.isCompleted
-                                            val updatedSet =
-                                                workoutSet.copy(isCompleted = isNowComplete)
-                                            viewModel.updateSet(updatedSet)
-
-                                            val autoStart =
-                                                settings?.autoStartRestTimer
-                                                    ?: AppSettings.DEFAULT_AUTO_START_REST_TIMER
-                                            val timerSeconds =
-                                                settings?.restTimerSeconds
-                                                    ?: AppSettings.DEFAULT_REST_TIMER_SECONDS
-
-                                            if (isNowComplete && autoStart) {
-                                                viewModel.startRestTimer(timerSeconds)
-                                            }
-                                        },
-                                    colors =
-                                        CardDefaults.cardColors(containerColor = backgroundColor),
-                                ) {
-                                    Row(
-                                        modifier =
-                                            Modifier.fillMaxWidth()
-                                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        if (workoutSet.isCompleted) {
-                                            Text(text = "✓", fontWeight = FontWeight.Bold)
-                                        } else {
+                                SwipeToDismissBox(
+                                    state = dismissState,
+                                    enableDismissFromStartToEnd = false,
+                                    onDismiss = { dismissValue ->
+                                        if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                                            viewModel.deleteSetById(workoutSet.setId)
+                                        }
+                                    },
+                                    backgroundContent = {
+                                        Box(
+                                            modifier =
+                                                Modifier.fillMaxSize()
+                                                    .clip(CardDefaults.shape)
+                                                    .background(
+                                                        MaterialTheme.colorScheme.errorContainer
+                                                    )
+                                                    .padding(horizontal = 16.dp),
+                                            contentAlignment = Alignment.CenterEnd,
+                                        ) {
                                             Text(
-                                                text = "${index + 1}",
+                                                text = "Delete",
+                                                color = MaterialTheme.colorScheme.onErrorContainer,
                                                 fontWeight = FontWeight.Bold,
                                             )
                                         }
-                                        Text(text = "--- kg")
-                                        Text(text = "--- reps")
+                                    },
+                                ) {
+                                    Card(
+                                        modifier =
+                                            Modifier.fillMaxWidth().clickable {
+                                                val isNowComplete = !workoutSet.isCompleted
+                                                val updatedSet =
+                                                    workoutSet.copy(isCompleted = isNowComplete)
+                                                viewModel.updateSet(updatedSet)
+
+                                                val autoStart =
+                                                    settings?.autoStartRestTimer
+                                                        ?: AppSettings.DEFAULT_AUTO_START_REST_TIMER
+                                                val timerSeconds =
+                                                    settings?.restTimerSeconds
+                                                        ?: AppSettings.DEFAULT_REST_TIMER_SECONDS
+
+                                                if (isNowComplete && autoStart) {
+                                                    viewModel.startRestTimer(timerSeconds)
+                                                }
+                                            },
+                                        colors =
+                                            CardDefaults.cardColors(
+                                                containerColor = backgroundColor
+                                            ),
+                                    ) {
+                                        Row(
+                                            modifier =
+                                                Modifier.fillMaxWidth()
+                                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            if (workoutSet.isCompleted) {
+                                                Text(text = "✓", fontWeight = FontWeight.Bold)
+                                            } else {
+                                                Text(
+                                                    text = "${index + 1}",
+                                                    fontWeight = FontWeight.Bold,
+                                                )
+                                            }
+                                            Text(text = "--- kg")
+                                            Text(text = "--- reps")
+                                        }
                                     }
                                 }
                             }
