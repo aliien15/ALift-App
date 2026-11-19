@@ -107,12 +107,36 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                                 modifier = Modifier.padding(12.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                Text(
-                                    text = exerciseName,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp),
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text(
+                                        text = exerciseName,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(start = 4.dp, bottom = 4.dp),
+                                    )
+
+                                    Button(
+                                        modifier = Modifier.padding(end = 4.dp, bottom = 4.dp),
+                                        onClick = {
+                                            workout?.session?.let { activeSession ->
+                                                viewModel.removeExerciseFromSession(
+                                                    activeSession.sessionId,
+                                                    exerciseName,
+                                                )
+                                            }
+                                        },
+                                    ) {
+                                        Text(
+                                            text = "-",
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                        )
+                                    }
+                                }
 
                                 var setCounter = 1
                                 for (workoutSet in workoutSets) {
