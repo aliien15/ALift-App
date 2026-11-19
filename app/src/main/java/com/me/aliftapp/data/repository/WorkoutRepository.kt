@@ -71,4 +71,12 @@ class WorkoutRepository(
         workoutSetDao.deleteAllSetsForSession(session.sessionId)
         sessionDao.discardSession(session.sessionId)
     }
+
+    suspend fun deleteExerciseForSession(sessionId: Long, exerciseName: String) {
+        workoutSetDao.deleteExerciseForSession(sessionId, exerciseName)
+    }
+
+    suspend fun deleteWorkoutSetById(setId: Long) {
+        workoutSetDao.deleteWorkoutSetById(setId)
+    }
 }

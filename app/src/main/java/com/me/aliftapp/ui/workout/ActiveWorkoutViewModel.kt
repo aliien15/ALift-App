@@ -86,6 +86,16 @@ class ActiveWorkoutViewModel(
         viewModelScope.launch { workoutRepository.addSetToSession(sessionId, exerciseName) }
     }
 
+    fun deleteSetById(setId: Long) {
+        viewModelScope.launch { workoutRepository.deleteWorkoutSetById(setId) }
+    }
+
+    fun removeExerciseFromSession(sessionId: Long, exerciseName: String) {
+        viewModelScope.launch {
+            workoutRepository.deleteExerciseForSession(sessionId, exerciseName)
+        }
+    }
+
     fun updateSet(set: WorkoutSet) {
         viewModelScope.launch { workoutRepository.updateSet(set) }
     }
