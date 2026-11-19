@@ -5,13 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,6 +36,11 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
     val restTimeRemaining by viewModel.restTimeRemaining.collectAsStateWithLifecycle()
 
     var currentTime by remember { mutableLongStateOf(System.currentTimeMillis()) }
+
+    val groupedExercises =
+        remember(workout?.workoutSets) {
+            workout?.workoutSets?.groupBy { it.exerciseName }?.entries?.toList().orEmpty()
+        }
 
     val completedSetColor =
         if (isSystemInDarkTheme()) {
@@ -68,137 +74,133 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
 
         HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
-        // Middle Scrollable Content
-        Column(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
+        // Middle scrollable content
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // Button made for testing, not meant to go on production
-            Button(
-                onClick = { viewModel.generateDummyWorkoutForUi() },
-                modifier = Modifier.fillMaxWidth(),
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.onSurface,
-                    ),
-            ) {
-                Text("Add Dummy Exercises (Test)")
+            item(key = "dummy_exercises_button") {
+                Button(
+                    onClick = { viewModel.generateDummyWorkoutForUi() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                ) {
+                    Text("Add Dummy Exercises (Test)")
+                }
             }
 
             // Exercise Boxes
-            workout
-                ?.workoutSets
-                ?.groupBy { it.exerciseName }
-                ?.let { groupedSets ->
-                    for ((exerciseName, workoutSets) in groupedSets) {
-                        Card(
+            items(items = groupedExercises, key = { (exerciseName, _) -> exerciseName }) {
+                (exerciseName, workoutSets) ->
+                Card(
+                    modifier = Modifier.fillMaxWidth().animateItem(),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        ),
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                            colors =
-                                CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                                ),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Column(
-                                modifier = Modifier.padding(12.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Text(
-                                        text = exerciseName,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(start = 4.dp, bottom = 4.dp),
-                                    )
+                            Text(
+                                text = exerciseName,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(start = 4.dp, bottom = 4.dp),
+                            )
 
-                                    Button(
-                                        modifier = Modifier.padding(end = 4.dp, bottom = 4.dp),
-                                        onClick = {
-                                            workout?.session?.let { activeSession ->
-                                                viewModel.removeExerciseFromSession(
-                                                    activeSession.sessionId,
-                                                    exerciseName,
-                                                )
-                                            }
-                                        },
-                                    ) {
-                                        Text(
-                                            text = "-",
-                                            style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.Bold,
+                            Button(
+                                modifier = Modifier.padding(end = 4.dp, bottom = 4.dp),
+                                onClick = {
+                                    workout?.session?.let { activeSession ->
+                                        viewModel.removeExerciseFromSession(
+                                            activeSession.sessionId,
+                                            exerciseName,
                                         )
                                     }
-                                }
+                                },
+                            ) {
+                                Text(
+                                    text = "-",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+                        }
 
-                                var setCounter = 1
-                                for (workoutSet in workoutSets) {
-                                    val backgroundColor =
-                                        if (workoutSet.isCompleted) completedSetColor
-                                        else MaterialTheme.colorScheme.background
-                                    Card(
-                                        modifier =
-                                            Modifier.fillMaxWidth().clickable {
-                                                val isNowComplete = !workoutSet.isCompleted
-                                                val updatedSet =
-                                                    workoutSet.copy(isCompleted = isNowComplete)
-                                                viewModel.updateSet(updatedSet)
+                        workoutSets.forEachIndexed { index, workoutSet ->
+                            key(workoutSet.setId) {
+                                val backgroundColor =
+                                    if (workoutSet.isCompleted) completedSetColor
+                                    else MaterialTheme.colorScheme.background
 
-                                                val autoStart =
-                                                    settings?.autoStartRestTimer
-                                                        ?: AppSettings.DEFAULT_AUTO_START_REST_TIMER
-                                                val timerSeconds =
-                                                    settings?.restTimerSeconds
-                                                        ?: AppSettings.DEFAULT_REST_TIMER_SECONDS
+                                Card(
+                                    modifier =
+                                        Modifier.fillMaxWidth().clickable {
+                                            val isNowComplete = !workoutSet.isCompleted
+                                            val updatedSet =
+                                                workoutSet.copy(isCompleted = isNowComplete)
+                                            viewModel.updateSet(updatedSet)
 
-                                                if (isNowComplete && autoStart) {
-                                                    viewModel.startRestTimer(timerSeconds)
-                                                }
-                                            },
-                                        colors =
-                                            CardDefaults.cardColors(
-                                                containerColor = backgroundColor
-                                            ),
-                                    ) {
-                                        Row(
-                                            modifier =
-                                                Modifier.fillMaxWidth()
-                                                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            if (workoutSet.isCompleted) {
-                                                Text(text = "✓", fontWeight = FontWeight.Bold)
-                                            } else {
-                                                Text(
-                                                    text = "$setCounter",
-                                                    fontWeight = FontWeight.Bold,
-                                                )
+                                            val autoStart =
+                                                settings?.autoStartRestTimer
+                                                    ?: AppSettings.DEFAULT_AUTO_START_REST_TIMER
+                                            val timerSeconds =
+                                                settings?.restTimerSeconds
+                                                    ?: AppSettings.DEFAULT_REST_TIMER_SECONDS
+
+                                            if (isNowComplete && autoStart) {
+                                                viewModel.startRestTimer(timerSeconds)
                                             }
-                                            Text(text = "--- kg")
-                                            Text(text = "--- reps")
+                                        },
+                                    colors =
+                                        CardDefaults.cardColors(containerColor = backgroundColor),
+                                ) {
+                                    Row(
+                                        modifier =
+                                            Modifier.fillMaxWidth()
+                                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        if (workoutSet.isCompleted) {
+                                            Text(text = "✓", fontWeight = FontWeight.Bold)
+                                        } else {
+                                            Text(
+                                                text = "${index + 1}",
+                                                fontWeight = FontWeight.Bold,
+                                            )
                                         }
+                                        Text(text = "--- kg")
+                                        Text(text = "--- reps")
                                     }
-                                    setCounter++
                                 }
                             }
                         }
                     }
                 }
+            }
 
-            // New Add Exercise Button
-            OutlinedButton(
-                onClick = { /* TODO: Add exercise searching sub-menu */ },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("+ Add Exercise")
+            // New add exercise button
+            item(key = "add_exercise_button") {
+                OutlinedButton(
+                    onClick = { /* TODO: Add exercise searching sub-menu */ },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("+ Add Exercise")
+                }
             }
         }
 
