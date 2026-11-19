@@ -81,21 +81,6 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // Button made for testing, not meant to go on production
-            item(key = "dummy_exercises_button") {
-                Button(
-                    onClick = { viewModel.generateDummyWorkoutForUi() },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors =
-                        ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                        ),
-                ) {
-                    Text("Add Dummy Exercises (Test)")
-                }
-            }
-
             // Exercise Boxes
             items(items = groupedExercises, key = { (exerciseName, _) -> exerciseName }) {
                 (exerciseName, workoutSets) ->
@@ -230,6 +215,11 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
                 OutlinedButton(
                     onClick = { /* TODO: Add exercise searching sub-menu */ },
                     modifier = Modifier.fillMaxWidth(),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
                 ) {
                     Text("+ Add Exercise")
                 }
