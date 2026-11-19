@@ -2,10 +2,12 @@ package com.me.aliftapp.data.repository
 
 import com.me.aliftapp.data.local.Session
 import com.me.aliftapp.data.local.SessionWithSets
+import com.me.aliftapp.data.local.User
 import com.me.aliftapp.data.local.WorkoutSet
 import com.me.aliftapp.data.local.dao.SessionDao
 import com.me.aliftapp.data.local.dao.UserDao
 import com.me.aliftapp.data.local.dao.WorkoutSetDao
+import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.Flow
 
 class WorkoutRepository(
@@ -18,6 +20,13 @@ class WorkoutRepository(
     }
 
     suspend fun startNewSession(name: String): Long {
+        // For testing purposes
+        if (userDao.getCurrentUser() == null) {
+            userDao.insertUser(
+                User(uuid = Uuid.random().toString(), name = "Robertino", currentStreak = 0)
+            )
+        }
+
         val newSession =
             Session(
                 name = name,
@@ -56,5 +65,18 @@ class WorkoutRepository(
     suspend fun finishSession(session: Session) {
         val completeSession = session.copy(endTimestamp = System.currentTimeMillis())
         sessionDao.updateSession(completeSession)
+    }
+
+    suspend fun discardSession(session: Session) {
+        workoutSetDao.deleteAllSetsForSession(session.sessionId)
+        sessionDao.discardSession(session.sessionId)
+    }
+
+    suspend fun deleteExerciseForSession(sessionId: Long, exerciseName: String) {
+        workoutSetDao.deleteExerciseForSession(sessionId, exerciseName)
+    }
+
+    suspend fun deleteWorkoutSetById(setId: Long) {
+        workoutSetDao.deleteWorkoutSetById(setId)
     }
 }

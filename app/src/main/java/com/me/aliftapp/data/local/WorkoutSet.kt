@@ -32,4 +32,5 @@ data class WorkoutSet(
     val exerciseOrder: Int,
     val weight: Double,
     val reps: Int,
+    val isCompleted: Boolean = false,
 )

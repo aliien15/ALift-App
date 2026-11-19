@@ -18,4 +18,10 @@ interface WorkoutSetDao {
         "SELECT exerciseOrder FROM workout_set WHERE sessionId = :sessionId AND exerciseName = :exerciseName LIMIT 1"
     )
     suspend fun getExistingExerciseOrder(sessionId: Long, exerciseName: String): Int?
+
+    @Query("DELETE FROM workout_set WHERE sessionId = :sessionId")
+    suspend fun deleteAllSetsForSession(sessionId: Long)
+
+    @Query("DELETE FROM workout_set WHERE sessionId = :sessionId AND exerciseName = :exerciseName")
+    suspend fun deleteExerciseForSession(sessionId: Long, exerciseName: String)
 }
