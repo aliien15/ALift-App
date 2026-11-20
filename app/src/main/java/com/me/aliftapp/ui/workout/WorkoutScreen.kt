@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.me.aliftapp.data.local.preferences.AppSettings
@@ -28,7 +31,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 
 @Composable
-fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
+fun WorkoutScreen(viewModel: ActiveWorkoutViewModel, onOpenSettings: () -> Unit) {
     val workout by viewModel.workoutState.collectAsStateWithLifecycle()
     val settings by viewModel.settingsState.collectAsStateWithLifecycle()
 
@@ -60,17 +63,31 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         // Top Header
         Box(
-            Modifier.fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .statusBarsPadding()
-                .padding(16.dp),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .statusBarsPadding()
+                    .padding(16.dp),
             contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = workout?.session?.name ?: "New Workout",
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 56.dp),
             )
+
+            Button(
+                modifier = Modifier.align(Alignment.CenterEnd).size(48.dp),
+                shape = CircleShape,
+                contentPadding = PaddingValues(0.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                onClick = onOpenSettings,
+            ) {
+                Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
+            }
         }
 
         HorizontalDivider(thickness = 2.dp, color = MaterialTheme.colorScheme.outlineVariant)

@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
             ALiftAppTheme(darkTheme = settings.isDarkMode) {
                 // SettingsScreen(viewModel = settingsViewModel)
-                WorkoutScreen(viewModel = workoutViewModel)
+                WorkoutScreen(viewModel = workoutViewModel) {}
             }
         }
     }
