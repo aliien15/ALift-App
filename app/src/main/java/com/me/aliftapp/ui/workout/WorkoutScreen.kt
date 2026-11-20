@@ -213,7 +213,11 @@ fun WorkoutScreen(viewModel: ActiveWorkoutViewModel) {
             // New add exercise button
             item(key = "add_exercise_button") {
                 OutlinedButton(
-                    onClick = { /* TODO: Add exercise searching sub-menu */ },
+                    onClick = {
+                        viewModel.generateDummyWorkoutForUi()
+
+                        /* TODO: Add exercise searching sub-menu */
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     colors =
                         ButtonDefaults.buttonColors(
