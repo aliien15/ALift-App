@@ -2,14 +2,19 @@ package com.me.aliftapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.me.aliftapp.data.repository.WorkoutRepository
+import com.me.aliftapp.ui.settings.SettingsScreen
 import com.me.aliftapp.ui.settings.SettingsViewModel
 import com.me.aliftapp.ui.theme.ALiftAppTheme
 import com.me.aliftapp.ui.workout.ActiveWorkoutViewModel
@@ -28,6 +33,8 @@ class MainActivity : ComponentActivity() {
                 viewModel(factory = SettingsViewModel.provideFactory(settingsStore))
 
             val settings by settingsViewModel.settingsState.collectAsStateWithLifecycle()
+            var showSettings by rememberSaveable { mutableStateOf(false) }
+            BackHandler(enabled = showSettings) { showSettings = false }
 
             val workoutViewModel: ActiveWorkoutViewModel =
                 viewModel(
@@ -47,8 +54,11 @@ class MainActivity : ComponentActivity() {
                 )
 
             ALiftAppTheme(darkTheme = settings.isDarkMode) {
-                // SettingsScreen(viewModel = settingsViewModel)
-                WorkoutScreen(viewModel = workoutViewModel) {}
+                if (showSettings) {
+                    SettingsScreen(viewModel = settingsViewModel) { showSettings = false }
+                } else {
+                    WorkoutScreen(viewModel = workoutViewModel) { showSettings = true }
+                }
             }
         }
     }
